@@ -37,7 +37,7 @@ builder.Services.AddScoped<IUnitofWorks, UnitofWorks>();
 builder.Services.AddScoped<ICourseService, CourseService>(); // put it in UoW ???
 builder.Services.AddScoped<IEnrollment, EnrollmentService>(); // put it in UoW ???
 builder.Services.AddScoped<ICloudStorage, GoogleCloudStorage>(); // service fro Google Cloud
-builder.Services.AddScoped<IImageFile, CloudFileService>(); // put it in UoW ???
+builder.Services.AddScoped<IFile, CloudFileService>(); // put it in UoW ???
 builder.Services.AddScoped<ICsvService, CsvService>(); // put it in UoW ???
 // Adding Authentication
 builder.Services.AddAuthentication(options =>

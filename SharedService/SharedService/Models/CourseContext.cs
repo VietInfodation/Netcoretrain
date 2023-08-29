@@ -19,7 +19,7 @@ public partial class CourseContext : DbContext
     public virtual DbSet<Course> Courses { get; set; }
 
     public virtual DbSet<Enrollment> Enrollments { get; set; }
-    public virtual DbSet<ImageFile> ImageFiles { get; set; }
+    public virtual DbSet<SharedService.Models.File> ImageFiles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseMySql("server=localhost;database=course;user=root;password=01Infodation", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.1.0-mysql"));
@@ -55,12 +55,12 @@ public partial class CourseContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_course");*/
         });
-        modelBuilder.Entity<ImageFile>(entity =>
+        modelBuilder.Entity<SharedService.Models.File>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.Property(e => e.ImageLink);
-            entity.Property(e => e.ImageStorageName);
+            entity.Property<string>(e => e.FileLink);
+            entity.Property<string>(e => e.FileStorageName);
 
 
 

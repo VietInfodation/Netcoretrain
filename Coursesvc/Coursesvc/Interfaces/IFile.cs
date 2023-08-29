@@ -2,9 +2,9 @@
 using SharedService.Models;
 namespace Coursesvc.Interfaces
 {
-    public interface IImageFile
+    public interface IFile
     {
-        Task<IActionResult> Add(ImageFile imageFile);
+        Task<IActionResult> Add(SharedService.Models.File imageFile);
         Task<IActionResult> Remove(int id);
         Task<IActionResult> GetFile(int id);
         Task<IActionResult> GetList(string fileName);

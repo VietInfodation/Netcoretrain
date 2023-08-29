@@ -8,20 +8,20 @@ namespace Coursesvc.Controllers
     [Route("image")]
     [ApiController]
 
-    public class ImageFileController : Controller
+    public class FileController : Controller
     {
-        private readonly IImageFile _imageFileService;
-        private readonly IUnitofWorks _unitofWorks;
-        public ImageFileController(IImageFile imageFileService, IUnitofWorks unitofWorks)
+        private readonly IFile _imageFileService;
+        //private readonly IUnitofWorks _unitofWorks;
+        public FileController(IFile imageFileService/*, IUnitofWorks unitofWorks*/)
         {
             _imageFileService = imageFileService;
-            _unitofWorks = unitofWorks;
+            //_unitofWorks = unitofWorks;
         }
 
 
         [Route("/")]
         [HttpPost]
-        public async Task<IActionResult> Upload([FromForm] ImageFile file)
+        public async Task<IActionResult> Upload([FromForm] SharedService.Models.File file)
         {
 
             return await _imageFileService.Add(file); 

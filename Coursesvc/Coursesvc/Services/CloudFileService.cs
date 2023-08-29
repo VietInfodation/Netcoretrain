@@ -17,13 +17,13 @@ using System.Net.Http;
 
 namespace Coursesvc.Services
 {
-    public class CloudFileService : IImageFile
+    public class CloudFileService : IFile
     {
         private readonly IUnitofWorks _unitofWorks;
         private readonly ICloudStorage _cloudStorage;
         private readonly CourseContext _coursecontext;
         private readonly IEnrollment _enrollmentservice;
-        private readonly IGenericRepository<ImageFile> _context;
+        private readonly IGenericRepository<SharedService.Models.File> _context;
         private readonly HttpClient _httpClient;
         private readonly GoogleWorkingFileDictionaryOptions _options;
         private readonly ICsvService _csvservice;
@@ -33,7 +33,7 @@ namespace Coursesvc.Services
             _cloudStorage = cloudStorage;
             _unitofWorks = unitofWorks;
             _coursecontext = coursecontext;
-            _context = _unitofWorks.GetRepository<ImageFile>();
+            _context = _unitofWorks.GetRepository<SharedService.Models.File>();
             _httpClient = httpClient;
             _enrollmentservice = enrollmentservice;
             _options = options.Value;
@@ -44,11 +44,11 @@ namespace Coursesvc.Services
         /// </summary>
         /// <param name="imageFile"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Add(ImageFile imageFile)
+        public async Task<IActionResult> Add(SharedService.Models.File imageFile)
         {
             try
             {
-                if(imageFile.ImageUrl != null) 
+                if(imageFile.FileUrl != null) 
                 {
                     await UploadFile(imageFile); // Upload the File to GG Cloud
                 }
@@ -73,9 +73,9 @@ namespace Coursesvc.Services
                 {
                     return new NotFoundResult();
                 }
-                if(imagefile.ImageStorageName != null)
+                if(imagefile.FileStorageName != null)
                 {
-                    await _cloudStorage.DeleteFileAsync(imagefile.ImageStorageName); // delete the file from GG Cloud
+                    await _cloudStorage.DeleteFileAsync(imagefile.FileStorageName); // delete the file from GG Cloud
                 }
                 _context.Remove(imagefile);
                 _unitofWorks.Commit();
@@ -98,9 +98,9 @@ namespace Coursesvc.Services
                 {
                     return new NotFoundResult();
                 }
-                if (imagefile.ImageStorageName != null)
+                if (imagefile.FileStorageName != null)
                 {
-                    await _cloudStorage.DownLoadFileAsync(imagefile.ImageStorageName,"~\\data"); // Download the file from GG Cloud
+                    await _cloudStorage.DownLoadFileAsync(imagefile.FileStorageName,"~\\data"); // Download the file from GG Cloud
                 }
                 return new OkResult();
             }
@@ -112,16 +112,16 @@ namespace Coursesvc.Services
         /// </summary>
         /// <param name="imageFile"></param>
         /// <returns></returns>
-        public async Task UploadFile(ImageFile imageFile)
+        public async Task UploadFile(SharedService.Models.File imageFile)
         {
             //fileNameForStorage is the name of the file to be stored
-            string fileNameForStorage = FormFileName(imageFile.Id.ToString(), imageFile.ImageUrl.FileName);
+            string fileNameForStorage = FormFileName(imageFile.Id.ToString(), imageFile.FileUrl.FileName);
 
             //the public link of the GG cloud file
-            imageFile.ImageLink = await _cloudStorage.UploadFileAsync(imageFile.ImageUrl, fileNameForStorage);
+            imageFile.FileLink = await _cloudStorage.UploadFileAsync(imageFile.FileUrl, fileNameForStorage);
 
             //Set the model ImageStorageName with the fileNameForStorage that we create above
-            imageFile.ImageStorageName = fileNameForStorage;
+            imageFile.FileStorageName = fileNameForStorage;
 
         }
 
@@ -164,8 +164,8 @@ namespace Coursesvc.Services
                 }
 
 
-                File.Delete(saveLocation);
-                File.Delete(saveLocationxlsx);
+                System.IO.File.Delete(saveLocation);
+                System.IO.File.Delete(saveLocationxlsx);
 
                 return new OkResult();
             }
