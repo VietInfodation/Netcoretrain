@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using SharedService.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Coursesvc.Models;
 

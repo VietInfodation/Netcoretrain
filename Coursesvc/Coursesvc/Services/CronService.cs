@@ -35,7 +35,7 @@ namespace Coursesvc.Services
             
             //Add or Update a recurring Task
             _recurringJobManager.AddOrUpdate(jobId, () => ExportFileRecurringJob(jobId),
-            Cron.Minutely);
+            Cron.Daily);
             Thread.Sleep(5000);
             return new OkObjectResult($"Executing Job Id: {jobId}...{DateTime.Now}");
         }
@@ -46,11 +46,11 @@ namespace Coursesvc.Services
             {
                 _logger.LogInformation($"Executing Job Id: {job_id} at {DateTime.Now}");
                 _fileService.WriteEmployeeCSV(); //Export file service
-                return Task.CompletedTask;
             } catch (Exception ex) 
             {
                 return Task.FromException(ex);
             }
+            return Task.CompletedTask;
         }
 
         public Task FireAndForgetJob(PerformContext context)

@@ -1,19 +1,12 @@
 ﻿using Coursesvc.Interfaces;
 using Coursesvc.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualBasic.FileIO;
 using SharedService.Interfaces;
 using SharedService.Models;
-using SharedService.Services;
-using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
-using System.Linq;
-using System.Net.Http;
 
 namespace Coursesvc.Services
 {
@@ -28,8 +21,8 @@ namespace Coursesvc.Services
         private readonly GoogleWorkingFileDictionaryOptions _options;
         private readonly ICsvService _csvservice;
 
-        public CloudFileService(ICloudStorage cloudStorage, IUnitofWorks unitofWorks,CourseContext coursecontext, HttpClient httpClient, IEnrollment enrollmentservice, IOptions<GoogleWorkingFileDictionaryOptions> options, ICsvService csvservice) 
-        { 
+        public CloudFileService(ICloudStorage cloudStorage, IUnitofWorks unitofWorks, CourseContext coursecontext, HttpClient httpClient, IEnrollment enrollmentservice, IOptions<GoogleWorkingFileDictionaryOptions> options, ICsvService csvservice)
+        {
             _cloudStorage = cloudStorage;
             _unitofWorks = unitofWorks;
             _coursecontext = coursecontext;
@@ -48,7 +41,7 @@ namespace Coursesvc.Services
         {
             try
             {
-                if(imageFile.FileUrl != null) 
+                if (imageFile.FileUrl != null)
                 {
                     await UploadFile(imageFile); // Upload the File to GG Cloud
                 }
@@ -57,7 +50,7 @@ namespace Coursesvc.Services
                 return new OkResult();
             }
             catch (Exception ex) { Console.WriteLine(ex); return new BadRequestResult(); }
-        } 
+        }
 
         /// <summary>
         /// Remove data from the Databae + File from the GG Cloud
@@ -73,7 +66,7 @@ namespace Coursesvc.Services
                 {
                     return new NotFoundResult();
                 }
-                if(imagefile.FileStorageName != null)
+                if (imagefile.FileStorageName != null)
                 {
                     await _cloudStorage.DeleteFileAsync(imagefile.FileStorageName); // delete the file from GG Cloud
                 }
@@ -100,11 +93,11 @@ namespace Coursesvc.Services
                 }
                 if (imagefile.FileStorageName != null)
                 {
-                    await _cloudStorage.DownLoadFileAsync(imagefile.FileStorageName,"~\\data"); // Download the file from GG Cloud
+                    await _cloudStorage.DownLoadFileAsync(imagefile.FileStorageName, "~\\data"); // Download the file from GG Cloud
                 }
                 return new OkResult();
             }
-            catch (Exception ex) {return new BadRequestResult(); }
+            catch (Exception ex) { return new BadRequestResult(); }
         }
 
         /// <summary>
@@ -169,7 +162,7 @@ namespace Coursesvc.Services
 
                 return new OkResult();
             }
-            catch (Exception ex) { return new BadRequestObjectResult(ex); }          
+            catch (Exception ex) { return new BadRequestObjectResult(ex); }
         }
 
         //Import .csv file
@@ -178,7 +171,7 @@ namespace Coursesvc.Services
             string fileName = Path.GetFileName(urlFile); //Get file name from url
             // Download the file from GG Cloud
             //"Assume" there are file in /new
-            await _cloudStorage.DownLoadFileAsync(fileName,"data"); 
+            await _cloudStorage.DownLoadFileAsync(fileName, "data");
             var checkrule = await RulingImportCsv(fileName); // Checking rule
             if (!checkrule)
             {
@@ -192,7 +185,7 @@ namespace Coursesvc.Services
         //Import and Check the rule for import
         public async Task<dynamic> RulingImportCsv(string fileName)
         {
-            List<string> listCol = new List<string> { "CourseCode","UserId","IsEnroll","EnrollDate" };
+            List<string> listCol = new List<string> { "CourseCode", "UserId", "IsEnroll", "EnrollDate" };
             //string fileName = "RegisterCourse_code1_2023_08_23.csv";
             List<string> duplicateCheck = new List<string>(); //Dictionary for checking duplicate key
 
@@ -200,9 +193,9 @@ namespace Coursesvc.Services
 
             var table = await GetDataTabletFromCSVFile($"data\\{fileName}"); //Import the .csv to a DataTable for read
 
-            if( table == null ) { return false; }
-           
-            if(!checkFormat || table.Columns.Count != 4) { return false; } //+ Nếu file sai, thiếu, thừa headers => reject file
+            if (table == null) { return false; }
+
+            if (!checkFormat || table.Columns.Count != 4) { return false; } //+ Nếu file sai, thiếu, thừa headers => reject file
 
             // Check if all DataTable columns exist in the listCol
             // Already do in GetDataTabletFromCSVFile....Kind of
@@ -210,7 +203,7 @@ namespace Coursesvc.Services
                 .Cast<DataColumn>()
                 .All(column => listCol.Contains(column.ColumnName));
 
-            if(!allColumnsExist ) { return false; }
+            if (!allColumnsExist) { return false; }
 
 
             //Get the Id Course
@@ -222,14 +215,14 @@ namespace Coursesvc.Services
                    .FirstOrDefault();
             if (idCoures.ToString() == null) { return false; } //Check if the Id Code exist in DB
 
-            
+
 
             foreach (DataRow row in table.Rows)
             {
                 // Access each column value using the column name or index
                 if (row[0].ToString() != courseCode) { continue; } // + Nếu row nào có CourseCode khác với Course_code in file name
                 if (row[2].ToString() == null || row[2].ToString() == "" || row[0].ToString() == null || row[1].ToString() == null) { continue; } //If null => reject
-                if (duplicateCheck.Any(pair => pair == row[1].ToString())){ continue; } //Nếu userId duplicate in file => reject
+                if (duplicateCheck.Any(pair => pair == row[1].ToString())) { continue; } //Nếu userId duplicate in file => reject
                 duplicateCheck.Add(row[1].ToString());
                 //Run the Api to check if the user exist and return the User's Balance
                 var responsecheckuser = await _httpClient.GetAsync($"https://localhost:7226/api/Authenticate/checkuser?id={row[1]}"); //send request to API address
@@ -253,10 +246,12 @@ namespace Coursesvc.Services
                 //I have fix the Add method so that if the User already subcribe then it only update the Date and Balance (not add new row)
                 //The problem is that it will ignore the Buz about checking if the User already subcribe in the old Topic (will fix later)
                 await _enrollmentservice.Add(
-                    new Enrollment { 
-                        CouresId = idCoures, 
-                        UserId = row[1].ToString(), 
-                        EnrolledDate = date }); 
+                    new Enrollment
+                    {
+                        CouresId = idCoures,
+                        UserId = row[1].ToString(),
+                        EnrolledDate = date
+                    });
             }
             return true; //All rule for file is pass
         }
@@ -273,7 +268,7 @@ namespace Coursesvc.Services
         {
             //!!!Should update for upload .csv file
             var fileExtension = Path.GetExtension(fileName);
-            var fileNameForStorage = $"{title}-{DateTime.Now.ToString("yyyyMMddHHmmss")}{fileExtension}"; 
+            var fileNameForStorage = $"{title}-{DateTime.Now.ToString("yyyyMMddHHmmss")}{fileExtension}";
             return fileNameForStorage;
         }
 
@@ -349,7 +344,7 @@ namespace Coursesvc.Services
                             }
                         }
                         csvData.Rows.Add(fieldData);
-                        if (csvData.Rows.Count !=4 ) { throw new Exception("there are some line that doesn't have ; delimiter"); } //if there a line with "," => throw error
+                        if (csvData.Rows.Count != 4) { throw new Exception("there are some line that doesn't have ; delimiter"); } //if there a line with "," => throw error
                     }
                 }
             }

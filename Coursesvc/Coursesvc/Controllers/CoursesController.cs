@@ -1,9 +1,5 @@
-﻿using SharedService;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Coursesvc.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using Coursesvc.Models;
 
 namespace Coursesvc.Controllers
 {

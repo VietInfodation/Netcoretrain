@@ -1,13 +1,8 @@
-﻿using SharedService.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+﻿using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
+using SharedService.Interfaces;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace SharedService.Repository
 {
@@ -22,12 +17,12 @@ namespace SharedService.Repository
         }
         public void Add(T entity)
         {
-           _dbSet.Add(entity);
+            _dbSet.Add(entity);
         }
 
         public void AddRange(IEnumerable<T> entities)
         {
-           _dbSet.AddRange(entities);
+            _dbSet.AddRange(entities);
         }
         public IQueryable<T> Find(Expression<Func<T, bool>> expression)
         {
@@ -43,22 +38,22 @@ namespace SharedService.Repository
         }
         public void Remove(T entity)
         {
-           _dbSet.Remove(entity);
+            _dbSet.Remove(entity);
         }
 
         public void Update(T entity)
         {
-           _dbSet.Update(entity);
+            _dbSet.Update(entity);
         }
 
         public void RemoveRange(IEnumerable<T> entities)
         {
-           _dbSet.RemoveRange(entities);
+            _dbSet.RemoveRange(entities);
         }
 
         public void UpdateRange(IEnumerable<T> entities)
         {
-           _dbSet.UpdateRange(entities);
+            _dbSet.UpdateRange(entities);
         }
 
         //Map two item
@@ -114,7 +109,7 @@ namespace SharedService.Repository
                $"UPDATE {typeof(T).Name}s SET {elementUpdate} WHERE Id = @Id"; // SQL string
             parameters.Add(new MySqlParameter("@Id", elementId));
 
-            return  _context.Database.ExecuteSqlRaw(sql,parameters); //Run the raw SQL query
+            return _context.Database.ExecuteSqlRaw(sql, parameters); //Run the raw SQL query
         }
     }
 }

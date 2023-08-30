@@ -1,6 +1,4 @@
-﻿using Google.Cloud.Storage.V1;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace SharedService.Interfaces
 {

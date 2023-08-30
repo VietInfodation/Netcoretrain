@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Coursesvc.Models;
 using SharedService.Interfaces;
 using SharedService.Repository;
-using Coursesvc.Models;
 
 namespace SharedService
 {
@@ -14,11 +12,11 @@ namespace SharedService
 
         public UnitofWorks(CourseContext context)//, //IDbContextTransaction transaction)
         {
-           
+
             //_transaction = transaction;
             _context = context;
         }
-        public void BeginTransaction() 
+        public void BeginTransaction()
         {
             _context.Database.BeginTransaction();
         }
