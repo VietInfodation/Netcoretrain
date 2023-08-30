@@ -1,10 +1,10 @@
 using Coursesvc.Interfaces;
 using Coursesvc.Models;
 using Coursesvc.Services;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
@@ -19,26 +19,36 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-ConfigureLogging();
-builder.Host.UseSerilog();
+////ConfigureLogging(); //Logging kibana
+//builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<CourseContext>(o => o.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.1.0-mysql")));
+//Main DB context
+builder.Services.AddDbContext<CourseContext>(o => o.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.1.0-mysql")), ServiceLifetime.Singleton);
 
+//Working file Option
 builder.Services.Configure<GoogleWorkingFileDictionaryOptions>(builder.Configuration.GetSection("GoogleWorkingFileDictionary"));
 
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<HttpClient, HttpClient>();
-builder.Services.AddScoped<IUnitofWorks, UnitofWorks>();
-builder.Services.AddScoped<ICourseService, CourseService>(); // put it in UoW ???
-builder.Services.AddScoped<IEnrollment, EnrollmentService>(); // put it in UoW ???
-builder.Services.AddScoped<ICloudStorage, GoogleCloudStorage>(); // service fro Google Cloud
-builder.Services.AddScoped<IFile, CloudFileService>(); // put it in UoW ???
-builder.Services.AddScoped<ICsvService, CsvService>(); // put it in UoW ???
+// Service + table context
+builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddTransient<HttpClient, HttpClient>();
+builder.Services.AddTransient<IUnitofWorks, UnitofWorks>();
+builder.Services.AddTransient<ICourseService, CourseService>(); // put it in UoW ???
+builder.Services.AddTransient<IEnrollment, EnrollmentService>(); // put it in UoW ???
+builder.Services.AddTransient<ICloudStorage, GoogleCloudStorage>(); // service fro Google Cloud
+builder.Services.AddTransient<IFile, CloudFileService>(); // put it in UoW ???
+builder.Services.AddTransient<ICsvService, CsvService>(); // put it in UoW ???
+//builder.Services.AddScoped<IBackgroundJobClient, BackgroundJobClient>(); // put it in UoW ???
+builder.Services.AddSingleton<ICronJobs, CronService>(); // put it in UoW ???
+//---------------------
+//Hangfire
+builder.Services.AddHangfire(x => x.UseMemoryStorage());
+builder.Services.AddHangfireServer();
+
 // Adding Authentication
 builder.Services.AddAuthentication(options =>
 {
@@ -70,6 +80,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHangfireDashboard();
 }
 
 app.UseHttpsRedirection();
@@ -80,6 +91,7 @@ app.MapControllers();
 
 app.Run();
 
+//Congigure for logging on kibana
 void ConfigureLogging()
 {
     var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");

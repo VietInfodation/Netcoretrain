@@ -177,7 +177,7 @@ namespace Coursesvc.Services
         {
             string fileName = Path.GetFileName(urlFile); //Get file name from url
             // Download the file from GG Cloud
-            //Assume there are file in /new
+            //"Assume" there are file in /new
             await _cloudStorage.DownLoadFileAsync(fileName,"data"); 
             var checkrule = await RulingImportCsv(fileName); // Checking rule
             if (!checkrule)

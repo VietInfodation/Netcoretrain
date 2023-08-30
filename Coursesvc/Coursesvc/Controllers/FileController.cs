@@ -10,11 +10,11 @@ namespace Coursesvc.Controllers
 
     public class FileController : Controller
     {
-        private readonly IFile _imageFileService;
+        private readonly IFile _FileService;
         //private readonly IUnitofWorks _unitofWorks;
         public FileController(IFile imageFileService/*, IUnitofWorks unitofWorks*/)
         {
-            _imageFileService = imageFileService;
+            _FileService = imageFileService;
             //_unitofWorks = unitofWorks;
         }
 
@@ -24,7 +24,7 @@ namespace Coursesvc.Controllers
         public async Task<IActionResult> Upload([FromForm] SharedService.Models.File file)
         {
 
-            return await _imageFileService.Add(file); 
+            return await _FileService.Add(file); 
         }
 
         [Route("/{id}")]
@@ -32,14 +32,14 @@ namespace Coursesvc.Controllers
         public async Task<IActionResult> Remove(int id)
         {
 
-            return await _imageFileService.Remove(id); 
+            return await _FileService.Remove(id); 
         }
         [Route("/{id}")]
         [HttpGet]
         public async Task<IActionResult> GetFile(int id)
         {
 
-            return await _imageFileService.GetFile(id); 
+            return await _FileService.GetFile(id); 
         }
 
         [Route("/csv")]
@@ -47,7 +47,7 @@ namespace Coursesvc.Controllers
         public async Task<IActionResult> ImportCsv(string fileName)
         {
 
-            return await _imageFileService.ImportCsv(fileName);
+            return await _FileService.ImportCsv(fileName);
         }
 
         [Route("/export")]
@@ -55,7 +55,7 @@ namespace Coursesvc.Controllers
         public async Task<IActionResult> ExportCsv()
         {
 
-            return await _imageFileService.WriteEmployeeCSV();
+            return await _FileService.WriteEmployeeCSV();
         }
     }
 }
