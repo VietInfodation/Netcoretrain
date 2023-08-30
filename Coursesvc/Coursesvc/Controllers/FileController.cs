@@ -1,7 +1,5 @@
 ﻿using Coursesvc.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using SharedService.Interfaces;
-using SharedService.Models;
 
 namespace Coursesvc.Controllers
 {
@@ -15,7 +13,7 @@ namespace Coursesvc.Controllers
         public FileController(IFile imageFileService/*, IUnitofWorks unitofWorks*/)
         {
             _FileService = imageFileService;
-            //_unitofWorks = unitofWorks;
+            ////_unitofWorks = unitofWorks;
         }
 
 
@@ -23,30 +21,26 @@ namespace Coursesvc.Controllers
         [HttpPost]
         public async Task<IActionResult> Upload([FromForm] SharedService.Models.File file)
         {
-
-            return await _FileService.Add(file); 
+            return await _FileService.Add(file);
         }
 
         [Route("/{id}")]
         [HttpDelete]
         public async Task<IActionResult> Remove(int id)
         {
-
-            return await _FileService.Remove(id); 
+            return await _FileService.Remove(id);
         }
         [Route("/{id}")]
         [HttpGet]
         public async Task<IActionResult> GetFile(int id)
         {
-
-            return await _FileService.GetFile(id); 
+            return await _FileService.GetFile(id);
         }
 
         [Route("/csv")]
         [HttpGet]
         public async Task<IActionResult> ImportCsv(string fileName)
         {
-
             return await _FileService.ImportCsv(fileName);
         }
 
@@ -54,7 +48,6 @@ namespace Coursesvc.Controllers
         [HttpGet]
         public async Task<IActionResult> ExportCsv()
         {
-
             return await _FileService.WriteEmployeeCSV();
         }
     }

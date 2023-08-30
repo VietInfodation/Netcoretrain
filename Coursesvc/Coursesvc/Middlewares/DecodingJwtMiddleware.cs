@@ -18,7 +18,7 @@ namespace Coursesvc.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
-            string authorizationHeader = context.Request.Headers["Authorization"];
+            string? authorizationHeader = context.Request.Headers["Authorization"];
             if (!string.IsNullOrEmpty(authorizationHeader) && authorizationHeader.StartsWith("Bearer "))
             {
                 string token = authorizationHeader.Substring("Bearer ".Length).Trim();
@@ -43,7 +43,7 @@ namespace Coursesvc.Middlewares
                     var claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var validatedToken);
                     context.Items["DecodedJwtClaims"] = claimsPrincipal.Claims;
                 }
-                catch (Exception ex)
+                catch
                 {
                     // Token validation failed, you can handle the error here
                     await _next(context);

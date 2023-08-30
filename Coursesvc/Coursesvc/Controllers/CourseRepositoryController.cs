@@ -106,13 +106,13 @@ namespace Coursesvc.Controllers
         public IActionResult UpdateRangeSQL([FromBody] Course[] courses, string[] column)
         {
             //Update the Course using raw SQL
-            return _courseService.UpdateRangewithSQL(courses, column);
+            return _courseService.UpdateRangeWithSQL(courses, column);
         }
         [HttpPatch("range-rawsplitsql")]
         public IActionResult UpdateRangeSplitSQL([FromBody] Course[] courses, [Required] string[] column, [Required] int row)
         {
             //Update the Course using raw SQL
-            return _courseService.UpdateRangewithSplitSQL(courses, column, row);
+            return _courseService.UpdateRangeWithSplitSQL(courses, column, row);
         }
     }
 }

@@ -65,7 +65,7 @@ namespace SharedService.Services
             fileStream.Close();
         }
 
-        public async  Task<bool> CheckDuplicate(string fileName)
+        public async Task<bool> CheckDuplicate(string fileName)
         {
             List<string> duplicate = new List<string>();
             var listobject = storageClient.ListObjects(bucketName, rootfolder); // Get list of file in GCS
@@ -91,7 +91,7 @@ namespace SharedService.Services
             return false;
         }
 
-        public async Task movieFileInGCS(string source, string dest)
+        public async Task MoveFileInGCS(string source, string dest)
         {
             storageClient.CopyObject(bucketName, source, bucketName, dest);
             storageClient.DeleteObject(bucketName, source);

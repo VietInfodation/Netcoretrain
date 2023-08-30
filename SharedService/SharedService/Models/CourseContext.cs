@@ -14,7 +14,6 @@ public partial class CourseContext : DbContext
     }
 
     public virtual DbSet<Course> Courses { get; set; }
-
     public virtual DbSet<Enrollment> Enrollments { get; set; }
     public virtual DbSet<SharedService.Models.File> ImageFiles { get; set; }
 

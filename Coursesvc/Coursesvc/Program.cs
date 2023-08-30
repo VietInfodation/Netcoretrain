@@ -39,12 +39,13 @@ builder.Services.AddTransient<HttpClient, HttpClient>();
 builder.Services.AddTransient<IUnitofWorks, UnitofWorks>();
 builder.Services.AddTransient<ICourseService, CourseService>(); // put it in UoW ???
 builder.Services.AddTransient<IEnrollment, EnrollmentService>(); // put it in UoW ???
-builder.Services.AddTransient<ICloudStorage, GoogleCloudStorage>(); // service fro Google Cloud
+builder.Services.AddTransient<ICloudStorage, GoogleCloudStorage>(); // service from Google Cloud
 builder.Services.AddTransient<IFile, CloudFileService>(); // put it in UoW ???
 builder.Services.AddTransient<ICsvService, CsvService>(); // put it in UoW ???
 //builder.Services.AddScoped<IBackgroundJobClient, BackgroundJobClient>(); // put it in UoW ???
 builder.Services.AddSingleton<ICronJobs, CronService>(); // put it in UoW ???
 //---------------------
+
 //Hangfire
 builder.Services.AddHangfire(x => x.UseMemoryStorage());
 builder.Services.AddHangfireServer();

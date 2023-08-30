@@ -38,8 +38,6 @@ namespace SharedService.Services
                 workbook.Save();
             }
 
-
-
             return Path.Combine("data", "export", fileNamexl); //return the file location
         }
     }

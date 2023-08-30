@@ -23,7 +23,6 @@ namespace Coursesvc.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-
             var enrollments = _context.GetAll();
             if(enrollments == null)
             {

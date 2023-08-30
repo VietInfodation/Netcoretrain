@@ -74,7 +74,7 @@ namespace Coursesvc.Services
                 _unitofWorks.Commit();
                 return new OkResult();
             }
-            catch (Exception ex) { return new BadRequestResult(); }
+            catch (Exception ex) { return new BadRequestObjectResult(ex); }
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Coursesvc.Services
                 }
                 return new OkResult();
             }
-            catch (Exception ex) { return new BadRequestResult(); }
+            catch (Exception ex) { return new BadRequestObjectResult(ex); }
         }
 
         /// <summary>
@@ -141,7 +141,6 @@ namespace Coursesvc.Services
                 string saveLocation = _csvservice.WriteCSV<dynamic>(list); //get the exported .csv location
                 string saveLocationxlsx = _csvservice.WriteXlsx<dynamic>(list); //get the exported .xlsx location
 
-
                 //Begin Upload two files
                 using (var csvStream = new FileStream(saveLocation, FileMode.Open))
                 using (var excelStream = new FileStream(saveLocationxlsx, FileMode.Open))
@@ -155,7 +154,6 @@ namespace Coursesvc.Services
                     // Upload Excel file
                     await _cloudStorage.UploadFileAsync(excelFormFile, $"Course/export/excel/{saveLocationxlsx}");
                 }
-
 
                 System.IO.File.Delete(saveLocation);
                 System.IO.File.Delete(saveLocationxlsx);
@@ -175,10 +173,10 @@ namespace Coursesvc.Services
             var checkrule = await RulingImportCsv(fileName); // Checking rule
             if (!checkrule)
             {
-                await _cloudStorage.movieFileInGCS($"{_options.New}/{fileName}", $"{_options.Failed}/{fileName}");
+                await _cloudStorage.MoveFileInGCS($"{_options.New}/{fileName}", $"{_options.Failed}/{fileName}");
                 return new BadRequestObjectResult("Moved to failed");
             }
-            await _cloudStorage.movieFileInGCS($"{_options.New}/{fileName}", $"{_options.Completed}/{fileName}");
+            await _cloudStorage.MoveFileInGCS($"{_options.New}/{fileName}", $"{_options.Completed}/{fileName}");
             return new OkObjectResult("Move to completed");
         }
 
@@ -205,7 +203,6 @@ namespace Coursesvc.Services
 
             if (!allColumnsExist) { return false; }
 
-
             //Get the Id Course
             string[] parts = fileName.Split('_');
             string courseCode = parts[1];
@@ -214,8 +211,6 @@ namespace Coursesvc.Services
                    .Select(entry => (int)entry.Id)
                    .FirstOrDefault();
             if (idCoures.ToString() == null) { return false; } //Check if the Id Code exist in DB
-
-
 
             foreach (DataRow row in table.Rows)
             {
@@ -234,7 +229,6 @@ namespace Coursesvc.Services
                 if (row[2].ToString() == "false") { await _enrollmentservice.Remove(row[1].ToString(), idCoures); continue; } // + Nếu IsEnroll = false => user hủy khóa học
 
                 //var checkExist = _unitofWorks.GetRepository<Enrollment>().Find(e => e.CouresId == idCoures && e.UserId == row[1].ToString()).FirstOrDefault();
-
 
                 //+ Nếu IsEnroll = true and EnrollDate = null => EnrollDate default = today
                 DateTime date = DateTime.Now;
@@ -256,8 +250,6 @@ namespace Coursesvc.Services
             return true; //All rule for file is pass
         }
 
-
-
         /// <summary>
         /// Create file name format
         /// </summary>
@@ -272,15 +264,12 @@ namespace Coursesvc.Services
             return fileNameForStorage;
         }
 
-
         //For testing CheckDuplicate, you can ignore this
         public async Task<IActionResult> GetList(string fileName)
         {
             var check = await _cloudStorage.CheckDuplicate(fileName);
             return new OkObjectResult(check);
         }
-
-
 
         private async Task<bool> CheckFileFormat(string fileName)
         {
@@ -348,7 +337,7 @@ namespace Coursesvc.Services
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 return null;
             }

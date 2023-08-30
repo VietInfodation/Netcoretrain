@@ -8,6 +8,6 @@ namespace SharedService.Interfaces
         Task DeleteFileAsync(string fileNameForStorage);
         Task DownLoadFileAsync(string nameFile, string dest);
         Task<bool> CheckDuplicate(string nameFile);
-        Task movieFileInGCS(string source, string dest);
+        Task MoveFileInGCS(string source, string dest);
     }
 }

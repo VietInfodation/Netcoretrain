@@ -57,7 +57,7 @@ namespace SharedService.Repository
         }
 
         //Map two item
-        public T mapUpdateOject(T newItem, T updateItem)
+        public T MapUpdateOject(T newItem, T updateItem)
         {
             var itemProperties = newItem.GetType().GetProperties();
             var newItemProperties = updateItem.GetType().GetProperties();
@@ -84,6 +84,7 @@ namespace SharedService.Repository
             }
             return newItem;
         }
+
         //**************OUTDATED
         public int UpdateSQLRaw(T item)
         {

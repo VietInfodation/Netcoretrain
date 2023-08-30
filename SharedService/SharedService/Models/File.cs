@@ -15,7 +15,7 @@ namespace SharedService.Models
         [MaxFileSize(1 * 1024 * 1024)]
         [PermittedExtensions(new string[] { ",jpq", ".png", ".gif", ".jpeg", ".xlsx", ".xls",".csv" })]
         [NotMapped]
-        public virtual IFormFile FileUrl { get; set; }
+        public virtual IFormFile? FileUrl { get; set; }
 
         public string? FileStorageName { get; set; }
     }

@@ -15,7 +15,7 @@ namespace Coursesvc.Interfaces
         IActionResult RemoveRange(int[] id);
         IActionResult AddRange(Course [] entities);
         IActionResult UpdateRange(Course [] entities);
-        IActionResult UpdateRangewithSQL(Course[] entities, string[]columns);
-        IActionResult UpdateRangewithSplitSQL(Course[] entities, string[]columns,int row);
+        IActionResult UpdateRangeWithSQL(Course[] entities, string[]columns);
+        IActionResult UpdateRangeWithSplitSQL(Course[] entities, string[]columns,int row);
     }
 }

@@ -145,7 +145,7 @@ namespace Coursesvc.Services
                         // Detach the tracked entity from the original context
                         _coursecontext.Entry(existingcourse).State = EntityState.Detached;
 
-                        coursetoupdate.Add(_context.mapUpdateOject(courses[i], existingcourse));
+                        coursetoupdate.Add(_context.MapUpdateOject(courses[i], existingcourse));
                     }
                     //_logger.LogInformation("Fail the checking method id" + courses[i].Id);
                 }
@@ -165,7 +165,7 @@ namespace Coursesvc.Services
         /// <param name="courses">Body of the request</param>
         /// <param name="columns">columns to update</param>
         /// <returns></returns>
-        public IActionResult UpdateRangewithSQL(Course[] courses, string[] columns)
+        public IActionResult UpdateRangeWithSQL(Course[] courses, string[] columns)
         {
             try
             {
@@ -260,7 +260,7 @@ namespace Coursesvc.Services
             }
         }
 
-        public IActionResult UpdateRangewithSplitSQL(Course[] courses, string[] columns, int row)
+        public IActionResult UpdateRangeWithSplitSQL(Course[] courses, string[] columns, int row)
         {
             try
             {

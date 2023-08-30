@@ -12,7 +12,6 @@ namespace SharedService
 
         public UnitofWorks(CourseContext context)//, //IDbContextTransaction transaction)
         {
-
             //_transaction = transaction;
             _context = context;
         }

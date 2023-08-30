@@ -15,7 +15,7 @@ namespace SharedService.Interfaces
         void RemoveRange(IEnumerable<T> entities);
         void UpdateRange(IEnumerable<T> entities);
 
-        T mapUpdateOject(T item, T newItem);
+        T MapUpdateOject(T item, T newItem);
         int UpdateSQLRaw(T item);
     }
 }
