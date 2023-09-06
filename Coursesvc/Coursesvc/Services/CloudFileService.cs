@@ -35,17 +35,17 @@ namespace Coursesvc.Services
         /// <summary>
         /// Add to the DataBase the File Name and the File link + Upload load file to the Google Cloud
         /// </summary>
-        /// <param name="imageFile"></param>
+        /// <param name="file"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Add(SharedService.Models.File imageFile)
+        public async Task<IActionResult> Add(SharedService.Models.File file)
         {
             try
             {
-                if (imageFile.FileUrl != null)
+                if (file.FileUrl != null)
                 {
-                    await UploadFile(imageFile); // Upload the File to GG Cloud
+                    await UploadFile(file); // Upload the File to GG Cloud
                 }
-                _context.Add(imageFile); // Add the info to Database
+                _context.Add(file); // Add the info to Database
                 await _coursecontext.SaveChangesAsync();
                 return new OkResult();
             }
@@ -59,18 +59,18 @@ namespace Coursesvc.Services
         /// <returns></returns>
         public async Task<IActionResult> Remove(int id)
         {
-            var imagefile = _context.GetById(id); // find the row
+            var file = _context.GetById(id); // find the row
             try
             {
-                if (imagefile == null)
+                if (file == null)
                 {
                     return new NotFoundResult();
                 }
-                if (imagefile.FileStorageName != null)
+                if (file.FileStorageName != null)
                 {
-                    await _cloudStorage.DeleteFileAsync(imagefile.FileStorageName); // delete the file from GG Cloud
+                    await _cloudStorage.DeleteFileAsync(file.FileStorageName); // delete the file from GG Cloud
                 }
-                _context.Remove(imagefile);
+                _context.Remove(file);
                 _unitofWorks.Commit();
                 return new OkResult();
             }
@@ -84,16 +84,16 @@ namespace Coursesvc.Services
         /// <returns></returns>
         public async Task<IActionResult> GetFile(int id)
         {
-            var imagefile = _context.GetById(id); // find the row
+            var file = _context.GetById(id); // find the row
             try
             {
-                if (imagefile == null)
+                if (file == null)
                 {
                     return new NotFoundResult();
                 }
-                if (imagefile.FileStorageName != null)
+                if (file.FileStorageName != null)
                 {
-                    await _cloudStorage.DownLoadFileAsync(imagefile.FileStorageName, "~\\data"); // Download the file from GG Cloud
+                    await _cloudStorage.DownLoadFileAsync(file.FileStorageName, "~\\data"); // Download the file from GG Cloud
                 }
                 return new OkResult();
             }
@@ -103,23 +103,23 @@ namespace Coursesvc.Services
         /// <summary>
         /// Called the service for Upload file
         /// </summary>
-        /// <param name="imageFile"></param>
+        /// <param name="file"></param>
         /// <returns></returns>
-        public async Task UploadFile(SharedService.Models.File imageFile)
+        public async Task UploadFile(SharedService.Models.File file)
         {
             //fileNameForStorage is the name of the file to be stored
-            string fileNameForStorage = FormFileName(imageFile.Id.ToString(), imageFile.FileUrl.FileName);
+            string fileNameForStorage = FormFileName(file.Id.ToString(), file.FileUrl.FileName);
 
             //the public link of the GG cloud file
-            imageFile.FileLink = await _cloudStorage.UploadFileAsync(imageFile.FileUrl, fileNameForStorage);
+            file.FileLink = await _cloudStorage.UploadFileAsync(file.FileUrl, fileNameForStorage);
 
             //Set the model ImageStorageName with the fileNameForStorage that we create above
-            imageFile.FileStorageName = fileNameForStorage;
+            file.FileStorageName = fileNameForStorage;
 
         }
 
         //Export CSV and XlSX
-        public async Task<IActionResult> WriteEmployeeCSV()
+        public async Task<IActionResult> WriteCSV()
         {
             try
             {
@@ -138,24 +138,24 @@ namespace Coursesvc.Services
                                EnrollDate = enroll.EnrolledDate,
                            };
 
-                string saveLocation = _csvservice.WriteCSV<dynamic>(list); //get the exported .csv location
+                string saveLocationcsv = _csvservice.WriteCSV<dynamic>(list); //get the exported .csv location
                 string saveLocationxlsx = _csvservice.WriteXlsx<dynamic>(list); //get the exported .xlsx location
 
                 //Begin Upload two files
-                using (var csvStream = new FileStream(saveLocation, FileMode.Open))
+                using (var csvStream = new FileStream(saveLocationcsv, FileMode.Open))
                 using (var excelStream = new FileStream(saveLocationxlsx, FileMode.Open))
                 {
-                    IFormFile csvFormFile = new FormFile(csvStream, 0, csvStream.Length, null, Path.GetFileName(saveLocation));
+                    IFormFile csvFormFile = new FormFile(csvStream, 0, csvStream.Length, null, Path.GetFileName(saveLocationcsv));
                     IFormFile excelFormFile = new FormFile(excelStream, 0, excelStream.Length, null, Path.GetFileName(saveLocationxlsx));
 
                     // Upload CSV file
-                    await _cloudStorage.UploadFileAsync(csvFormFile, $"Course/export/csv/{saveLocation}");
+                    await _cloudStorage.UploadFileAsync(csvFormFile, $"Course/export/csv/{saveLocationcsv}");
 
                     // Upload Excel file
                     await _cloudStorage.UploadFileAsync(excelFormFile, $"Course/export/excel/{saveLocationxlsx}");
                 }
 
-                System.IO.File.Delete(saveLocation);
+                System.IO.File.Delete(saveLocationcsv);
                 System.IO.File.Delete(saveLocationxlsx);
 
                 return new OkResult();
@@ -196,7 +196,7 @@ namespace Coursesvc.Services
             if (!checkFormat || table.Columns.Count != 4) { return false; } //+ Nếu file sai, thiếu, thừa headers => reject file
 
             // Check if all DataTable columns exist in the listCol
-            // Already do in GetDataTabletFromCSVFile....Kind of
+            //What if the order wrong? How can we check follow order if there are a lot of column?
             bool allColumnsExist = table.Columns
                 .Cast<DataColumn>()
                 .All(column => listCol.Contains(column.ColumnName));

@@ -45,7 +45,7 @@ namespace Coursesvc.Services
             try 
             {
                 _logger.LogInformation($"Executing Job Id: {job_id} at {DateTime.Now}");
-                _fileService.WriteEmployeeCSV(); //Export file service
+                _fileService.WriteCSV(); //Export file service
             } catch (Exception ex) 
             {
                 return Task.FromException(ex);

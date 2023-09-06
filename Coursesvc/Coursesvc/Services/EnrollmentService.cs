@@ -2,11 +2,8 @@
 using Coursesvc.Models;
 using Microsoft.AspNetCore.Mvc;
 using SharedService.Interfaces;
-using System.Net.Http;
-using System.Text.Json;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
+using System.Text.Json;
 
 namespace Coursesvc.Services
 {
@@ -23,7 +20,7 @@ namespace Coursesvc.Services
             _enrollmentcontext = _unitofWorks.GetRepository<Enrollment>();
             _coursecontext = _unitofWorks.GetRepository<Course>();
             _httpClient = httpClient;
-            _logger = logger;   
+            _logger = logger;
         }
 
         public async Task<IActionResult> Add(Enrollment enrollment)
@@ -33,31 +30,31 @@ namespace Coursesvc.Services
 
             //Run the Api to check if the user exist and return the User's Balance
             var responsecheckuser = await _httpClient.GetAsync($"https://localhost:7226/api/Authenticate/checkuser?id={enrollment.UserId}"); //send request to API address
-            
+
             if (responsecheckuser.IsSuccessStatusCode) //If APi success
             {
                 balance = Double.Parse(await responsecheckuser.Content.ReadAsStringAsync()); // Save the balance from the API
             }
             else
                 return new BadRequestObjectResult("Khong ton tai user");
-            
-            if(_coursecontext.GetById(enrollment.CouresId) == null) // check existing course
+
+            if (_coursecontext.GetById(enrollment.CouresId) == null) // check existing course
             {
                 //_logger.LogInformation($"Khong co khoa hoc");
                 return new BadRequestObjectResult("Khong ton tai khoa hoc");
             }
-            if(enrollment.EnrolledDate == null)
+            if (enrollment.EnrolledDate == null)
             {
                 enrollment.EnrolledDate = DateTime.Now;
             }
-            if(_coursecontext.GetById(enrollment.CouresId).Price > balance)// check the balance is enough
+            if (_coursecontext.GetById(enrollment.CouresId).Price > balance)// check the balance is enough
             {
                 //_logger.LogInformation($"So tien cua cousre {enrollment.Coures.Price}");
                 return new BadRequestObjectResult("Khong du tien");
             }
 
             // if all logic above correct check if the user already have that course
-            var exists = _enrollmentcontext.Find(e => e.CouresId == enrollment.CouresId && e.UserId == enrollment.UserId).FirstOrDefault(); 
+            var exists = _enrollmentcontext.Find(e => e.CouresId == enrollment.CouresId && e.UserId == enrollment.UserId).FirstOrDefault();
             if (exists != null)
             {
                 _logger.LogInformation($"Existed dk: {exists}");
@@ -77,10 +74,10 @@ namespace Coursesvc.Services
 
             //Call the APi to change the balance
             var responsecahngebalance = await _httpClient.PutAsync($"https://localhost:7226/api/Authenticate/changebalance", content); //send request to API address
-         
+
             if (responsecahngebalance.IsSuccessStatusCode) // if success
             {
-                if(isUpdate) { return new OkObjectResult("Update Date Success"); }
+                if (isUpdate) { return new OkObjectResult("Update Date Success"); }
                 _logger.LogInformation($"Is Success");
                 _enrollmentcontext.Add(enrollment); // Add the enrollment
                 _unitofWorks.Commit(); // Commit
@@ -94,7 +91,7 @@ namespace Coursesvc.Services
 
         public async Task<IActionResult> Remove(string userId, int CourseId)
         {
-            try 
+            try
             {
                 //find if there a an enrollment with the specific userId 
                 var exists = _enrollmentcontext.Find(e => e.UserId == userId && e.CouresId == CourseId).FirstOrDefault();
@@ -105,7 +102,7 @@ namespace Coursesvc.Services
 
                 //check if the course exist again just for sure :v (yes it not necessary)
                 var balancecheck = _coursecontext.GetById(CourseId);
-                if(balancecheck == null) return new BadRequestObjectResult("Not found the specific course");
+                if (balancecheck == null) return new BadRequestObjectResult("Not found the specific course");
 
                 //Object for API
                 var balanceData = new
@@ -124,14 +121,14 @@ namespace Coursesvc.Services
                     return new OkResult();
                 }
                 return new BadRequestObjectResult("Loi khi goi API ?"); // Shouldnt reach this far (no hope here) ?
-   
-            } 
-            catch(Exception ex) 
+
+            }
+            catch (Exception ex)
             {
                 return new BadRequestObjectResult($"Co loi xay ra:{ex}");
             }
 
-            
+
         }
 
         public IEnumerable<Enrollment> GetAll()
@@ -143,5 +140,5 @@ namespace Coursesvc.Services
         {
             throw new NotImplementedException();
         }
-    }  
+    }
 }

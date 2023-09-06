@@ -44,6 +44,10 @@ builder.Services.AddTransient<IFile, CloudFileService>(); // put it in UoW ???
 builder.Services.AddTransient<ICsvService, CsvService>(); // put it in UoW ???
 //builder.Services.AddScoped<IBackgroundJobClient, BackgroundJobClient>(); // put it in UoW ???
 builder.Services.AddSingleton<ICronJobs, CronService>(); // put it in UoW ???
+
+builder.Services.AddSingleton<IRabbitMQConsumer,RabbitMQConsumer>(); // Consumer Service
+builder.Services.AddHostedService<ConsumerHostedService>(); //Background serrvice for rabbitmq
+//builder.Services.AddSingleton<RabbitMQConsumer>();
 //---------------------
 
 //Hangfire
@@ -90,7 +94,13 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+
+/*var rabbitMQConsumer = app.Services.GetRequiredService<IRabbitMQConsumer>();
+// Start consuming messages
+await Task.Run(() => rabbitMQConsumer.ReadMessages());*/
 app.Run();
+
+
 
 //Congigure for logging on kibana
 void ConfigureLogging()

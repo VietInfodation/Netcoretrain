@@ -48,7 +48,8 @@ namespace Coursesvc.Controllers
         [HttpGet]
         public async Task<IActionResult> ExportCsv()
         {
-            return await _FileService.WriteEmployeeCSV();
+            await _FileService.WriteCSV();       
+            return Ok();
         }
     }
 }

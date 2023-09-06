@@ -1,8 +1,6 @@
 ﻿using Coursesvc.Interfaces;
 using Coursesvc.Models;
-using Coursesvc.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Coursesvc.Controllers
 {
@@ -24,7 +22,7 @@ namespace Coursesvc.Controllers
         public IActionResult GetAll()
         {
             var enrollments = _context.GetAll();
-            if(enrollments == null)
+            if (enrollments == null)
             {
                 return BadRequest(new Enrollment[0]); // return null
             }
@@ -34,7 +32,7 @@ namespace Coursesvc.Controllers
         // Add enrollment
         [HttpPost]
         [Route("add-enrollment")]
-        public async Task<IActionResult> AddEnrollment([FromBody]Enrollment enrollment)
+        public async Task<IActionResult> AddEnrollment([FromBody] Enrollment enrollment)
         {
             return await _context.Add(enrollment);
         }
@@ -44,7 +42,7 @@ namespace Coursesvc.Controllers
         [Route("remove-enrollment")]
         public async Task<IActionResult> RemoveEnrollment(string userId, int CourseId)
         {
-            return await _context.Remove(userId,CourseId);
+            return await _context.Remove(userId, CourseId);
         }
 
 

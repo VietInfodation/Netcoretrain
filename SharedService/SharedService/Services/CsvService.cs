@@ -11,7 +11,7 @@ namespace SharedService.Services
         public string WriteCSV<dynamic>(IQueryable<dynamic> records)
         {
             //Format name
-            string fileName = $"Export_Backup_Course_{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}.csv";
+            string fileName = $"Export_Backup_Course_{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}_{DateTime.Now.Second}.csv";
 
             using (var writer = new StreamWriter(Path.Combine("data", "export", fileName)))
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
@@ -23,7 +23,7 @@ namespace SharedService.Services
         public string WriteXlsx<dynamic>(IQueryable<dynamic> records)
         {
             //Format name
-            string fileNamexl = $"Export_Backup_Course_{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}.xlsx";
+            string fileNamexl = $"Export_Backup_Course_{DateTime.Now.Year}_{DateTime.Now.Month}_{DateTime.Now.Day}_{DateTime.Now.Second}.xlsx";
 
             //using (var writer = new StreamWriter(Path.Combine("data", "export", fileName)))
             using (var xlsx = new ExcelWriter(Path.Combine("data", "export", fileNamexl)))

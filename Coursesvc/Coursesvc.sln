@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Coursesvc", "Coursesvc\Cour
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedService", "..\SharedService\SharedService\SharedService.csproj", "{27E26B69-780A-45B3-AF3F-E335184BC788}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitmqProducer", "..\RabbitmqProducer\RabbitmqProducer\RabbitmqProducer.csproj", "{3113E749-0934-4BE4-87E5-FE785714CA02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{27E26B69-780A-45B3-AF3F-E335184BC788}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27E26B69-780A-45B3-AF3F-E335184BC788}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27E26B69-780A-45B3-AF3F-E335184BC788}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3113E749-0934-4BE4-87E5-FE785714CA02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3113E749-0934-4BE4-87E5-FE785714CA02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3113E749-0934-4BE4-87E5-FE785714CA02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3113E749-0934-4BE4-87E5-FE785714CA02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

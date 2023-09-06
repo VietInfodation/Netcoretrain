@@ -8,6 +8,6 @@ namespace Coursesvc.Interfaces
         Task<IActionResult> GetFile(int id);
         Task<IActionResult> GetList(string fileName);
         Task<IActionResult> ImportCsv(string fileName);
-        Task<IActionResult> WriteEmployeeCSV();
+        Task<IActionResult> WriteCSV();
     }
 }
